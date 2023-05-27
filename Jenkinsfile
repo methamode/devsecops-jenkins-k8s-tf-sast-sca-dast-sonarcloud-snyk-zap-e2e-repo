@@ -6,7 +6,7 @@ pipeline {
    stages{
     stage('CompileandRunSonarAnalysis') {
             steps {	
-		sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=asgbuggywebapp -Dsonar.organization=asgbuggywebapp -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=932558e169d66a8f1d1adf470b908a46156f5844'
+		sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=methamodewebapp   -Dsonar.organization=methamodewebapp   -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c2100e48ae53ff3fa37e7dc8902b5762b3316122'
 			}
     }
 
@@ -22,7 +22,7 @@ pipeline {
             steps { 
                withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
                  script{
-                 app =  docker.build("asg")
+                 app =  docker.build("elmer-repo")
                  }
                }
             }
@@ -31,7 +31,7 @@ pipeline {
 	stage('Push') {
             steps {
                 script{
-                    docker.withRegistry('https://145988340565.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
+                    docker.withRegistry('https://490683757092.dkr.ecr.ap-southeast-1.amazonaws.com', 'ecr:ap-southeast-1:aws-credentials') {
                     app.push("latest")
                     }
                 }
@@ -47,19 +47,19 @@ pipeline {
 	      }
    	}
 	   
-	stage ('wait_for_testing'){
-	   steps {
-		   sh 'pwd; sleep 180; echo "Application Has been deployed on K8S"'
-	   	}
-	   }
+// 	stage ('wait_for_testing'){
+// 	   steps {
+// 		   sh 'pwd; sleep 180; echo "Application Has been deployed on K8S"'
+// 	   	}
+// 	   }
 	   
-	stage('RunDASTUsingZAP') {
-          steps {
-		    withKubeConfig([credentialsId: 'kubelogin']) {
-				sh('zap.sh -cmd -quickurl http://$(kubectl get services/asgbuggy --namespace=devsecops -o json| jq -r ".status.loadBalancer.ingress[] | .hostname") -quickprogress -quickout ${WORKSPACE}/zap_report.html')
-				archiveArtifacts artifacts: 'zap_report.html'
-		    }
-	     }
-       } 
-  }
+// 	stage('RunDASTUsingZAP') {
+//           steps {
+// 		    withKubeConfig([credentialsId: 'kubelogin']) {
+// 				sh('zap.sh -cmd -quickurl http://$(kubectl get services/asgbuggy --namespace=devsecops -o json| jq -r ".status.loadBalancer.ingress[] | .hostname") -quickprogress -quickout ${WORKSPACE}/zap_report.html')
+// 				archiveArtifacts artifacts: 'zap_report.html'
+// 		    }
+// 	     }
+//        } 
+//   }
 }
