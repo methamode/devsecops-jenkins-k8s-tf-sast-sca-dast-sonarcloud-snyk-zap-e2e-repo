@@ -13,8 +13,8 @@ spec:
         app: asgbuggy
     spec:
       containers:
-      - name: asgbuggy
-        image: 145988340565.dkr.ecr.us-west-2.amazonaws.com/asg
+      - name: asgbu  ggy
+        image: 490683757092.dkr.ecr.ap-southeast-1.amazonaws.com/elmer-repo
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
